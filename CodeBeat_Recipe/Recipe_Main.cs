@@ -10,43 +10,113 @@ namespace CodeBeat_Recipe
 {
     public partial class Recipe_Main : DevExpress.XtraReports.UI.XtraReport
     {
+        //Personality Variables
+        private string recipeName;
+        private string modelId;
+        private string modelcomponentId;
+        private string frameworkId;
+
+        //Design members
         DbManage data;
         PointF myUnboundPoint;
         float pageWidth;
 
         public Recipe_Main()
         {
-            myUnboundPoint = new PointF(0, 0);
+            this.myUnboundPoint = new PointF(0, 0);
             this.ReportUnit = ReportUnit.HundredthsOfAnInch;
             this.data = new DbManage();
             this.Margins.Left = 50F;
             this.Margins.Right = 50F;
             this.pageWidth = this.RootReport.PageWidth - 100F;
-            // this.Font = new System.Drawing.Font("Harrington",10F);
+       
             InitializeComponent();
-            //ForBlocks();
+            
+            PopulateReport();
 
-            AddOCRBlock();
-            AddBarcodeBlock();
-            AddPharamcodeBlock();
-            AddOCRBlock();
-            AddBarcodeBlock();
-            AddArtworkBlock();
-            float k = this.myUnboundPoint.Y;
-            float h = this.GroupBand.HeightF;
-            AddDatamatixBlock();
-            AddBarcodeBlock();
-            k = this.myUnboundPoint.Y;
-            h = this.GroupBand.HeightF;
+            //AddOCRBlock();
+            //AddBarcodeBlock();
+            //AddPharamcodeBlock();
+            //AddOCRBlock();
+            //AddBarcodeBlock();
+            //AddArtworkBlock();
+            //float k = this.myUnboundPoint.Y;
+            //float h = this.GroupBand.HeightF;
+            //AddDatamatixBlock();
+            //AddBarcodeBlock();
+            //k = this.myUnboundPoint.Y;
+            //h = this.GroupBand.HeightF;
 
-            int j = 0;
+            //int j = 0;
             
         }
 
+        public Recipe_Main(string name)
+        {
+            this.myUnboundPoint = new PointF(0, 0);
+            this.ReportUnit = ReportUnit.HundredthsOfAnInch;
+            this.data = new DbManage();
+            this.Margins.Left = 50F;
+            this.Margins.Right = 50F;
+            this.pageWidth = this.RootReport.PageWidth - 100F;
+            this.recipeName = name;
+
+            InitializeComponent();
+
+            PopulateReport();
+        }
+        
         public float getHeightInHunOfInch(string path)
         {
             System.Drawing.Image img = System.Drawing.Image.FromFile(path);
             return (float)Units.PixelsToHundredthsOfInch(img.Height, img.VerticalResolution);
+        }
+
+        public void MakeDocument()
+        {
+            this.CreateDocument();
+        }
+
+        private void PopulateReport()
+        {
+            //Find and Set modelId, modelcomponentId for given Recipe Name
+            DbManage d1 = new DbManage();
+            d1.make_connection();
+
+            this.modelId = d1.SelectAField("SELECT Id FROM span_db.model WHERE Name = '" + this.recipeName + "'");
+            this.modelcomponentId = d1.SelectAField("SELECT * FROM span_db.model_component WHERE ModelId = '" + this.modelId + "'");
+            this.frameworkId = d1.SelectAField("SELECT * FROM span_db_codebeat_codereader.framework WHERE ModelComponentId = '" + this.modelcomponentId + "'");
+
+            //Get the list of blockIds
+            List<string> blockId = new List<string>();
+            d1.SelectMultiple("SELECT Id FROM span_db_codebeat_codereader.block WHERE FrameworkId = '" + this.frameworkId + "'", ref blockId);
+
+            for (int i=0; i<blockId.Count; i++)
+            {
+                string blocktype = d1.SelectAField("SELECT BlockType FROM span_db_codebeat_codereader.block WHERE Id = '" + blockId[0] + "'");
+
+                switch (blocktype)
+                {
+                    case "0":
+                        //Need to add blockId as argument
+                        AddPharamcodeBlock();
+                        break;
+                    case "1":
+                        AddDatamatixBlock();
+                        break;
+                    case "2":
+
+                        break;
+                    case "3":
+                        AddOCRBlock();
+                        break;
+                    case "4":
+                        break;
+                    case "5":
+                        AddArtworkBlock();
+                        break;
+                }
+            }
         }
 
         public void ForBlocks()
@@ -250,7 +320,6 @@ namespace CodeBeat_Recipe
             this.GroupBand.HeightF = this.myUnboundPoint.Y;
      
         }
-
 
         public void AddOCRBlock()
         {
@@ -461,7 +530,6 @@ namespace CodeBeat_Recipe
 
         }
 
-
         public void AddBarcodeBlock()
         {
             this.GroupBand.HeightF += 700F;
@@ -575,7 +643,6 @@ namespace CodeBeat_Recipe
             XPBox.SizeF = new SizeF(750F, pic.HeightF+table.HeightF+20F);
             this.GroupBand.HeightF = this.myUnboundPoint.Y;
         }
-
 
         public void AddDatamatixBlock()
         {
@@ -725,7 +792,6 @@ namespace CodeBeat_Recipe
             XPBox.SizeF = new SizeF(750F, pic.HeightF + table.HeightF + 20F);
             this.GroupBand.HeightF = this.myUnboundPoint.Y;
         }
-
 
         public void AddArtworkBlock()
         {

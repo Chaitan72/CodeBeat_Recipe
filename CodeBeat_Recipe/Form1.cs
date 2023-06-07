@@ -16,7 +16,7 @@ namespace CodeBeat_Recipe
         {
             InitializeComponent();
 
-            Recipe_Main rm = new Recipe_Main();
+            Recipe_Main rm = new Recipe_Main("testing");
             rm.CreateDocument();
 
             documentViewer1.DocumentSource = rm;

@@ -77,7 +77,6 @@ namespace CodeBeat_Recipe
             }
         }
 
-
         //Select statement
         public void Select(string qry)
         {
@@ -116,8 +115,6 @@ namespace CodeBeat_Recipe
             }
         }
 
-
-
         public string SelectAField(string qry)
         {
             string query = qry;
@@ -152,8 +149,6 @@ namespace CodeBeat_Recipe
             }
         }
 
-
-
         //Count Statement
         public int Count()
         {
@@ -179,7 +174,6 @@ namespace CodeBeat_Recipe
                 return Count;
             }
         }
-
 
         public void SelectMultiple(string qry, ref List<string> obj)
         {

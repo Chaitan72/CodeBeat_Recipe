@@ -11,15 +11,14 @@ using CodeBeat_Recipe;
 
 namespace MainForm
 {
-    public partial class Form1 : Form
+    public partial class MyForm : Form
     {
-        public Form1()
+        public MyForm()
         {
             InitializeComponent();
-           
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void MyForm_Load(object sender, EventArgs e)
         {
             DbManage data = new DbManage();
             data.make_connection();
@@ -30,7 +29,7 @@ namespace MainForm
             data.SelectMultiple("SELECT DISTINCT CreatedBy FROM span_db.model", ref uName);
             data.SelectMultiple("SELECT Name From span_db.model", ref rName);
 
-            for (int i=0; i<uName.Count(); i++)
+            for (int i = 0; i < uName.Count(); i++)
             {
                 this.CB_userName.Items.Add(uName[i]);
             }
@@ -38,15 +37,12 @@ namespace MainForm
             this.CB_userName.SelectedText = "All Users";
 
             int c = 0;
-            for(int i=0; i<rName.Count(); i++)
+            for (int i = 0; i < rName.Count(); i++)
             {
                 this.LB_recipeName.Items.Add(rName[i]);
                 c++;
             }
-
-            int q = 0;
         }
-
 
         private void CB_userName_SelectionChangeCommitted(object sender, EventArgs e)
         {
@@ -58,7 +54,7 @@ namespace MainForm
             DbManage d1 = new DbManage();
             d1.make_connection();
             List<string> rName = new List<string>();
-            d1.SelectMultiple("SELECT Name FROM span_db.model WHERE CreatedBy = '" + curItem +"'", ref rName);
+            d1.SelectMultiple("SELECT Name FROM span_db.model WHERE CreatedBy = '" + curItem + "'", ref rName);
             for (int i = 0; i < rName.Count(); i++)
             {
                 this.LB_recipeName.Items.Add(rName[i]);
@@ -69,7 +65,13 @@ namespace MainForm
 
         private void button1_Click(object sender, EventArgs e)
         {
+            string rname = this.LB_recipeName.GetItemText(this.LB_recipeName.SelectedItem);
 
+            Recipe_Main r = new Recipe_Main(rname);
+            r.MakeDocument();
+            this.documentViewer1.DocumentSource = r;
+
+            //   doRecipe_Main("")
         }
     }
 }
